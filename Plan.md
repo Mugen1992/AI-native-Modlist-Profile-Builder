@@ -1,4 +1,4 @@
-# MVP Plan — AI-native Modlist Profile Builder
+# MVP Plan - AI-native Modlist Profile Builder
 
 ## 1. Цель MVP
 Собрать working end-to-end: `init → plan → apply → report`, создающий/обновляющий MO2 workspace и фиксирующий 4 артефакта состояния (Plan IR / Job Journal / Provenance / Lockfile) + derived Report.
