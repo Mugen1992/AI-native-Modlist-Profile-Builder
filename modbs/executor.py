@@ -18,6 +18,10 @@ ALLOWED_STEP_TYPES = {
 }
 
 
+class StepBlockedError(RuntimeError):
+    """Ошибка для остановки шага со статусом Blocked."""
+
+
 @dataclass(frozen=True)
 class ExecutionResult:
     """Результат выполнения плана."""
@@ -59,6 +63,13 @@ def execute(plan: PlanIR, ctx: Dict[str, Any]) -> ExecutionResult:
         try:
             handler = _resolve_handler(step, handlers)
             handler(step, ctx)
+        except StepBlockedError as exc:
+            return ExecutionResult(
+                status="Blocked",
+                executed_step_ids=executed_step_ids,
+                blocked_step_id=step.step_id,
+                message=str(exc),
+            )
         except Exception as exc:  # noqa: BLE001
             return ExecutionResult(
                 status="Failed",
