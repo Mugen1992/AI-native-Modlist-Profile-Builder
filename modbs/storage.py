@@ -56,20 +56,23 @@ def append_jsonl(path: PathLike, payloads: Iterable[Any] | Any) -> None:
     else:
         items = [payloads]
 
-    existing_text = ""
-    if target.exists():
-        existing_text = target.read_text(encoding="utf-8")
+    if not items:
+        return
 
     new_lines = [json.dumps(item, ensure_ascii=False) for item in items]
-    append_text = "\n".join(new_lines)
+    append_text = "\n".join(new_lines) + "\n"
 
-    combined = existing_text
-    if combined and not combined.endswith("\n"):
-        combined += "\n"
-    if append_text:
-        combined += append_text + "\n"
+    needs_newline = False
+    if target.exists() and target.stat().st_size > 0:
+        with open(target, "rb") as f:
+            f.seek(-1, os.SEEK_END)
+            if f.read(1) != b"\n":
+                needs_newline = True
 
-    _atomic_write_text(target, combined)
+    with open(target, "a", encoding="utf-8") as f:
+        if needs_newline:
+            f.write("\n")
+        f.write(append_text)
 
 
 def write_text(path: PathLike, text: str) -> None:
