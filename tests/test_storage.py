@@ -3,7 +3,7 @@
 import json
 
 from modbs.journal import append_event
-from modbs.storage import append_jsonl, read_json, write_json
+from modbs.storage import read_json, write_json
 
 
 def test_storage_json_roundtrip(tmp_path) -> None:
